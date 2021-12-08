@@ -16,6 +16,7 @@
     "@strapi/plugin-users-permissions": "4.0.0",
     "@strapi/strapi": "4.0.0",
     "pg": "8.6.0",
+    "socket.io": "^4.4.0",
     "stompit": "^1.0.0"
   },
   "author": {

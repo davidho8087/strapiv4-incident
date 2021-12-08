@@ -8,8 +8,6 @@ const { createCoreService } = require("@strapi/strapi").factories;
 
 module.exports = createCoreService("api::incident.incident", ({ strapi }) => ({
   async onTranformPayload(incidents) {
-    console.log("incidents", incidents);
-
     let entities = [];
     for (const i in incidents) {
       const cameraName = incidents[i].camera;

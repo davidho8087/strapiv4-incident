@@ -67,8 +67,6 @@ module.exports = createCoreController(
           .service("api::incident.incident")
           .onTranformPayload(vatesEvents);
 
-        console.log("what is entities", entities);
-
         const sanitizedEntity = await this.sanitizeOutput(entities, ctx);
         return this.transformResponse(sanitizedEntity);
       } catch (error) {
