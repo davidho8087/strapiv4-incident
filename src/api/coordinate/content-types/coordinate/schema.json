@@ -1,0 +1,43 @@
+{
+  "kind": "collectionType",
+  "collectionName": "coordinates",
+  "info": {
+    "singularName": "coordinate",
+    "pluralName": "coordinates",
+    "displayName": "coordinate",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "type": {
+      "type": "string"
+    },
+    "x": {
+      "type": "decimal"
+    },
+    "y": {
+      "type": "decimal"
+    },
+    "width": {
+      "type": "decimal"
+    },
+    "height": {
+      "type": "decimal"
+    },
+    "camera": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::camera.camera",
+      "inversedBy": "coordinate"
+    },
+    "location": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::location.location",
+      "inversedBy": "coordinate"
+    }
+  }
+}

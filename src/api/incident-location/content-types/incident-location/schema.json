@@ -1,0 +1,28 @@
+{
+  "kind": "collectionType",
+  "collectionName": "incident_locations",
+  "info": {
+    "singularName": "incident-location",
+    "pluralName": "incident-locations",
+    "displayName": "incidentLocation",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "location": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::location.location",
+      "inversedBy": "incident_locations"
+    },
+    "camera": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::camera.camera",
+      "inversedBy": "incident_locations"
+    }
+  }
+}

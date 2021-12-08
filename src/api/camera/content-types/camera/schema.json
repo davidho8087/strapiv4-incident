@@ -1,0 +1,37 @@
+{
+  "kind": "collectionType",
+  "collectionName": "cameras",
+  "info": {
+    "singularName": "camera",
+    "pluralName": "cameras",
+    "displayName": "camera",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string"
+    },
+    "model": {
+      "type": "string"
+    },
+    "serialNo": {
+      "type": "string"
+    },
+    "coordinate": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::coordinate.coordinate",
+      "mappedBy": "camera"
+    },
+    "incident_locations": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::incident-location.incident-location",
+      "mappedBy": "camera"
+    }
+  }
+}

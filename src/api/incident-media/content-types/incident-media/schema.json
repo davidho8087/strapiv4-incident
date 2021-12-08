@@ -1,0 +1,40 @@
+{
+  "kind": "collectionType",
+  "collectionName": "incident_medias",
+  "info": {
+    "singularName": "incident-media",
+    "pluralName": "incident-medias",
+    "displayName": "incidentMedia",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "tag": {
+      "type": "string"
+    },
+    "type": {
+      "type": "string"
+    },
+    "height": {
+      "type": "decimal"
+    },
+    "width": {
+      "type": "decimal"
+    },
+    "x": {
+      "type": "decimal"
+    },
+    "y": {
+      "type": "decimal"
+    },
+    "path": {
+      "type": "text"
+    },
+    "filename": {
+      "type": "string"
+    }
+  }
+}

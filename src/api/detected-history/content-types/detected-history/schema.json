@@ -1,0 +1,31 @@
+{
+  "kind": "collectionType",
+  "collectionName": "detected_histories",
+  "info": {
+    "singularName": "detected-history",
+    "pluralName": "detected-histories",
+    "displayName": "detectedHistory",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "detected": {
+      "type": "string"
+    },
+    "incident": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::incident.incident",
+      "inversedBy": "detected_histories"
+    },
+    "user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "detected_histories"
+    }
+  }
+}

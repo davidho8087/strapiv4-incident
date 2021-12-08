@@ -1,0 +1,96 @@
+{
+  "kind": "collectionType",
+  "collectionName": "incidents",
+  "info": {
+    "singularName": "incident",
+    "pluralName": "incidents",
+    "displayName": "Incident",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "eventId": {
+      "type": "string"
+    },
+    "camera": {
+      "type": "string"
+    },
+    "speed": {
+      "type": "string"
+    },
+    "detected": {
+      "type": "string"
+    },
+    "direction": {
+      "type": "string"
+    },
+    "visiblePeople": {
+      "type": "biginteger"
+    },
+    "isVerified": {
+      "type": "boolean",
+      "default": false
+    },
+    "time": {
+      "type": "datetime"
+    },
+    "location": {
+      "type": "string"
+    },
+    "runtime": {
+      "type": "decimal"
+    },
+    "startDateTime": {
+      "type": "datetime"
+    },
+    "incidentName": {
+      "type": "string"
+    },
+    "incidentDescription": {
+      "type": "text"
+    },
+    "incidentType": {
+      "type": "string"
+    },
+    "dateTime": {
+      "type": "datetime"
+    },
+    "incidentAttributes": {
+      "type": "json"
+    },
+    "parentEventId": {
+      "type": "string"
+    },
+    "trackingId": {
+      "type": "string"
+    },
+    "messageType": {
+      "type": "text"
+    },
+    "detected_histories": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::detected-history.detected-history",
+      "mappedBy": "incident"
+    },
+    "notes": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::note.note",
+      "mappedBy": "incident"
+    },
+    "imgs": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::incident-media.incident-media"
+    },
+    "incident_location": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::incident-location.incident-location"
+    }
+  }
+}
