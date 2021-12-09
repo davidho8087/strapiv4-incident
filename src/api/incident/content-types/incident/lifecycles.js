@@ -9,9 +9,10 @@ module.exports = {
       //   strapi.io.sockets.emit("newIncident", result);
       // }
       //const hello =  strapi.service("plugin::socket-io.my-service");
-      const hello2 = strapi.plugin("socket-io").service("socketIO");
+      const sockeIoResult = strapi.service("plugin::socket-io.socket-io")
+        .socketIO.ioServer;
 
-      console.log("hello", hello2);
+      console.log("sockeIoResult", sockeIoResult);
       // try {
       //   const hello = await strapi.plugin("socket-io").bootstrap("socketIO");
       //   console.log("hello", hello);

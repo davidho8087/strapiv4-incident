@@ -1,7 +1,7 @@
-'use strict';
+"use strict";
 
-const myService = require('./my-service');
+const socketIo = require("./socket-io");
 
 module.exports = {
-  myService,
+  "socket-io": socketIo,
 };

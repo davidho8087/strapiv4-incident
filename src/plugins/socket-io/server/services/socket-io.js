@@ -4,7 +4,7 @@ const socketIO = (strapi) => {
   const PermissionService = () => {
     return strapi.service("plugin::users-permissions");
   };
-  console.log("are you running SocketIo", strapi.server.httpServer);
+  //console.log("are you running SocketIo", strapi.server.httpServer);
 
   const ioServer = require("socket.io")(strapi.server.httpServer, {
     path: "/pipe",
@@ -62,9 +62,6 @@ const socketIO = (strapi) => {
 
     return next();
   });
-
-  // store the server.io instance to global to use elsewhere
-  return ioServer;
 };
 
 module.exports = ({ strapi }) => socketIO(strapi);

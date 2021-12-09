@@ -1,7 +1,7 @@
-'use strict';
+"use strict";
 
-const myService = require('./my-service');
+const activeMq = require("./active-mq");
 
 module.exports = {
-  myService,
+  "active-mq": activeMq,
 };

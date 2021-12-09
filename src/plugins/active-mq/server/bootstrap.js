@@ -3,13 +3,13 @@
 
 const stompit = require("stompit");
 
-module.exports = ({ strapi }) => {
+module.exports = async ({ strapi }) => {
   // bootstrap phase
 
   const topic = strapi.plugin("active-mq").config("topic");
   const queue = strapi.plugin("active-mq").config("queue");
 
-  const initActiveMq = (channel, callback) => {
+  const initActiveMq = (channel) => {
     const connectionOptions = strapi.plugin("active-mq").config("config");
 
     const reconnectOptions = strapi
@@ -85,6 +85,7 @@ module.exports = ({ strapi }) => {
           return;
         }
 
+        console.log("coming to readString");
         // Attempt to read for any incoming messages
         message.readString("utf-8", function (error, body) {
           if (error) {
@@ -98,7 +99,9 @@ module.exports = ({ strapi }) => {
           client.ack(message);
 
           //Send the Message to Callback
-          callback(body);
+          console.log("coming to Service");
+          // callback(body);
+          strapi.service("plugin::active-mq.active-mq").onSubmitHandler(body);
 
           strapi.log.info(`Successfully subscribed to ${channel}`);
         });
@@ -106,34 +109,6 @@ module.exports = ({ strapi }) => {
     });
   };
 
-  const onMessageReceived = async (message) => {
-    try {
-      console.log("FROM ACTIVEMQ");
-      const parsedMessage = JSON.parse(message);
-
-      return await strapi
-        .controller("api::incident.incident")
-        .createIncident(parsedMessage);
-      // await createIncident(JSON.parse(message));
-    } catch (error) {
-      // const errorPayload = {
-      //   module: "ActiveMq",
-      //   type: "error",
-      //   port: connectionOptions.port,
-      //   host: connectionOptions.host,
-      //   connectArgs: connectionOptions,
-      //   body: message,
-      // };
-      strapi.log.error(error);
-      // strapi.log.error("Failed Message", {
-      //   err: new Error("Failed Message"),
-      //   detail: errorPayload,
-      // });
-
-      return;
-    }
-  };
-
-  initActiveMq(queue, onMessageReceived);
-  initActiveMq(topic, onMessageReceived);
+  initActiveMq(queue);
+  initActiveMq(topic);
 };

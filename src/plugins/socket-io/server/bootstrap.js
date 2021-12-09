@@ -1,6 +1,6 @@
 "use strict";
 
-const initSocketIo = require("./services/my-service");
+const initSocketIo = require("./services/socket-io");
 
 module.exports = ({ strapi }) => {
   // bootstrap phase
