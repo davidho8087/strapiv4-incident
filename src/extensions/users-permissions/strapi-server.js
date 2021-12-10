@@ -281,21 +281,22 @@ module.exports = async (plugin) => {
     }
   };
 
-  // plugin.controllers.auth.logout = async (ctx) => {
-  //   console.log("hello logout");
-  //   return;
-  // };
+  // ADD CONTROLLER- Logout
+  plugin.controllers.auth.logout = async (ctx) => {
+    // to remove cookies
+    return;
+  };
 
-  // // // Add new Controller
-  // plugin.routes["content-api"].routes.push({
-  //   method: "POST",
-  //   path: "/auth/logout",
-  //   handler: "Auth.logout",
-  //   config: {
-  //     middlewares: ["plugin::users-permissions.rateLimit"],
-  //     prefix: "",
-  //   },
-  // });
+  // ADD ROUTE - Logout
+  plugin.routes["content-api"].routes.push({
+    method: "POST",
+    path: "/auth/logout",
+    handler: "auth.logout",
+    config: {
+      middlewares: ["plugin::users-permissions.rateLimit"],
+      prefix: "",
+    },
+  });
 
   return plugin;
 };
