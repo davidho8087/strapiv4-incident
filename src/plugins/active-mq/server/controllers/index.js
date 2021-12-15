@@ -1,7 +1,7 @@
-'use strict';
+"use strict";
 
-const myController = require('./my-controller');
+const activeMqController = require("./activeMq-controller");
 
 module.exports = {
-  myController,
+  activeMqController,
 };

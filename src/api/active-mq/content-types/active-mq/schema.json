@@ -1,0 +1,21 @@
+{
+  "kind": "collectionType",
+  "collectionName": "active_mqs",
+  "info": {
+    "singularName": "active-mq",
+    "pluralName": "active-mqs",
+    "displayName": "activeMq"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "topic": {
+      "type": "string"
+    },
+    "queue": {
+      "type": "string"
+    }
+  }
+}

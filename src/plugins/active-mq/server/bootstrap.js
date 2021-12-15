@@ -5,11 +5,62 @@ const stompit = require("stompit");
 
 module.exports = async ({ strapi }) => {
   // bootstrap phase
+  console.log("RERUN");
 
-  const topic = strapi.plugin("active-mq").config("topic");
-  const queue = strapi.plugin("active-mq").config("queue");
+  let queue = null;
+  let topic = null;
+
+  const activeMqConfig = await strapi
+    .store({ type: "plugin", name: "active-mq", key: "settings" })
+    .get();
+
+  // console.log("hello ");
+  console.log("activeMqConfig", activeMqConfig);
+
+  if (!activeMqConfig) {
+    // console.log("run create activeMq config");
+    const pluginStore = strapi.store({
+      type: "plugin",
+      name: "active-mq",
+    });
+
+    await pluginStore.set({
+      key: "settings",
+      value: {
+        channel: {
+          topic: process.env.ACTIVEMQ_TOPIC,
+          queue: process.env.ACTIVEMQ_QUEUE,
+        },
+        config: {
+          host: process.env.ACTIVEMQ_HOST,
+          port: process.env.ACTIVEMQ_PORT,
+          connectOptions: {
+            host: "/",
+            login: process.env.ACTIVEMQ_LOGIN,
+            passcode: process.env.ACTIVEMQ_PASSCODE,
+            "heart-beat": "5000,5000",
+          },
+          reconnectOptions: {
+            maxReconnects: 10,
+            initialReconnectDelay: 2000,
+            maxReconnectDelay: 60000,
+          },
+        },
+      },
+    });
+  } else {
+    topic = activeMqConfig.channel.topic;
+    queue = strapi.plugin("active-mq").config("queue");
+
+    console.log("topic hello", topic);
+    console.log("queue hello", queue);
+  }
+
+  // console.log("topic", activeMqConfig.channel.topic);
+  // console.log("queue", activeMqConfig.channel.queue);
 
   const initActiveMq = (channel) => {
+    console.log("channel", channel);
     const connectionOptions = strapi.plugin("active-mq").config("config");
 
     const reconnectOptions = strapi
@@ -109,6 +160,7 @@ module.exports = async ({ strapi }) => {
     });
   };
 
-  initActiveMq(queue);
-  initActiveMq(topic);
+  console.log("dont run");
+  initActiveMq(process.env.ACTIVEMQ_TOPIC);
+  initActiveMq(process.env.ACTIVEMQ_QUEUE);
 };
