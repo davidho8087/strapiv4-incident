@@ -7,32 +7,10 @@ const schema = yup.object().shape({
     .string(translatedErrors.string)
     .required(translatedErrors.required)
     .matches(NAME_REGEX, translatedErrors.regex),
-  url: yup
+  type: yup
     .string(translatedErrors.string)
     .required(translatedErrors.required)
-    .matches(URL_REGEX, translatedErrors.regex),
-  headers: yup.lazy((array) => {
-    let baseSchema = yup.array();
-
-    if (array.length === 1) {
-      const { key, value } = array[0];
-
-      if (!key && !value) {
-        return baseSchema;
-      }
-    }
-
-    return baseSchema.of(
-      yup.object().shape({
-        key: yup.string().required(translatedErrors.required),
-        value: yup.string().required(translatedErrors.required),
-      })
-    );
-  }),
-  events: yup
-    .array()
-    .min(1, translatedErrors.min)
-    .required(translatedErrors.required),
+    .matches(NAME_REGEX, translatedErrors.regex),
 });
 
 export default schema;

@@ -3,8 +3,10 @@ import { set } from "lodash";
 const cleanData = (data) => {
   const webhooks = { ...data };
 
+  console.log("webhooks", webhooks);
+  console.log("data", data);
   set(webhooks, "headers", unformatHeaders(data.headers));
-
+  console.log("after", webhooks);
   return webhooks;
 };
 

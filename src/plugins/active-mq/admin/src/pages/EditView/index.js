@@ -15,15 +15,15 @@ import {
 import { Main } from "@strapi/design-system/Main";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { useHistory, useRouteMatch } from "react-router-dom";
-import { useModels } from "../../hook/userModels";
+import useModels from "../../hook/userModels";
 import { axiosInstance } from "../../utils/axiosInstance";
-import WebhookForm from "./components/WebhookForm";
+import ActiveMqForm from "./components/ActiveMqForm";
 import cleanData from "./utils/formatData";
 
 const EditView = () => {
   const {
     params: { id },
-  } = useRouteMatch("/settings/webhooks/:id");
+  } = useRouteMatch("/plugins/active-mq/:id");
 
   const { replace } = useHistory();
   const { lockApp, unlockApp } = useOverlayBlocker();
@@ -68,7 +68,7 @@ const EditView = () => {
     data: triggerResponse,
     isIdle: isTriggerIdle,
     mutate,
-  } = useMutation(() => axiosInstance.post(`/admin/webhooks/${id}/trigger`));
+  } = useMutation(() => axiosInstance.post(`/plugin/active-mq/${id}/trigger`));
 
   const triggerWebhook = () =>
     mutate(null, {
@@ -80,30 +80,35 @@ const EditView = () => {
       },
     });
 
-  const createWebhookMutation = useMutation((body) =>
-    request("/admin/webhooks", {
+  const createWebhookMutation = useMutation((body) => {
+    console.log("body", body);
+    return request("/plugin/active-mq", {
       method: "POST",
       body,
-    })
-  );
+    });
+  });
 
   const updateWebhookMutation = useMutation(({ id, body }) =>
-    request(`/admin/webhooks/${id}`, {
+    request(`/plugin/active-mq/${id}`, {
       method: "PUT",
       body,
     })
   );
 
   const handleSubmit = async (data) => {
+    console.log("Hey Submit leh ------------------------->");
+    console.log("data", data);
+    console.log("isCreating", isCreating);
     if (isCreating) {
       lockApp();
-      createWebhookMutation.mutate(cleanData(data), {
+      createWebhookMutation.mutate(data, {
         onSuccess: (result) => {
+          console.log("result", result);
           toggleNotification({
             type: "success",
             message: { id: "Settings.webhooks.created" },
           });
-          replace(`/settings/webhooks/${result.data.id}`);
+          replace(`/plugin/active-mq/${result.data.id}`);
           unlockApp();
         },
         onError: (e) => {
@@ -152,9 +157,8 @@ const EditView = () => {
 
   return (
     <Main>
-      <p>Hello there</p>
-      <SettingsPageTitle name="Webhooks" />
-      <WebhookForm
+      <SettingsPageTitle name="ActiveMqs" />
+      <ActiveMqForm
         {...{
           handleSubmit,
           data,
