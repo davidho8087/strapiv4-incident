@@ -4,18 +4,25 @@
   "info": {
     "singularName": "active-mq",
     "pluralName": "active-mqs",
-    "displayName": "activeMq"
+    "displayName": "activeMq",
+    "description": ""
   },
   "options": {
     "draftAndPublish": true
   },
   "pluginOptions": {},
   "attributes": {
-    "topic": {
-      "type": "string"
+    "name": {
+      "type": "string",
+      "required": true
     },
-    "queue": {
-      "type": "string"
+    "type": {
+      "type": "string",
+      "required": true
+    },
+    "enabled": {
+      "type": "boolean",
+      "default": false
     }
   }
 }

@@ -10,12 +10,13 @@ module.exports = {
     //   .service("active-mq")
     //   .getSettings();
 
-    //const ActiveMqConfig = await getService("active-mq").getSettings();
+    const ActiveMqConfig = await getService("active-mq").getSettings();
 
-    const ActiveMqConfig = await strapi
-      .store({ type: "plugin", name: "active-mq", key: "settings" })
-      .get();
+    // const ActiveMqConfig = await strapi
+    //   .store({ type: "plugin", name: "active-mq", key: "settings" })
+    //   .get();
 
+    console.log("controller", ActiveMqConfig);
     ctx.send(ActiveMqConfig);
   },
 

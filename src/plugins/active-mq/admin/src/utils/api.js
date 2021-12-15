@@ -1,7 +1,7 @@
 import axiosInstance from "./axiosInstance";
 import getRequestURL from "./getRequestURL";
 
-export const fetchActiveMqSettings = async () => {
+export const fetchActiveMq = async () => {
   const { data } = await axiosInstance.get("/active-mq");
 
   return data;

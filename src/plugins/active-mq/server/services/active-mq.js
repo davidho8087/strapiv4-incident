@@ -68,12 +68,16 @@ module.exports = ({ strapi }) => ({
     // console.log(strapi.config.get("plugin.active-mq"));
     // return strapi.config.get("plugin.active-mq");
 
-    const entry = await strapi.entityService.findOne(
-      "api::active-mq.active-mq",
-      1
+    // const entry = await strapi.entityService.findOne(
+    //   "api::active-mq.active-mq",
+    //   1
+    // );
+
+    const entries = await strapi.entityService.findMany(
+      "api::active-mq.active-mq"
     );
 
-    return entry;
+    return entries;
   },
 
   async connectChannel(channel) {
