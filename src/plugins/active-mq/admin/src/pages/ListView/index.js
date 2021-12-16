@@ -74,9 +74,8 @@ const ListView = () => {
   const { push } = useHistory();
   const { pathname } = useLocation();
   const rowsCount = activeMqs.length;
-  console.log("rowsCount", rowsCount);
+
   const activeMqsToDeleteLength = activeMqsToDelete.length;
-  console.log("activeMqsToDeleteLength", activeMqsToDeleteLength);
 
   const getActiveMqIndex = (id) =>
     activeMqs.findIndex((activeMq) => activeMq.id === id);
@@ -100,10 +99,7 @@ const ListView = () => {
         method: "GET",
       });
 
-      console.log("data", data);
-
       if (isMounted.current) {
-        console.log("are you here");
         dispatch({
           type: "GET_DATA_SUCCEEDED",
           data,
@@ -141,128 +137,126 @@ const ListView = () => {
     }
   };
 
-  // const handleConfirmDeleteOne = async () => {
-  //   try {
-  //     await request(`/admin/activeMqs/${activeMqToDelete}`, {
-  //       method: "DELETE",
-  //     });
+  const handleConfirmDeleteOne = async () => {
+    try {
+      await request(`/active-mq/${activeMqToDelete}`, {
+        method: "DELETE",
+      });
 
-  //     dispatch({
-  //       type: "ACTIVEMQ_DELETED",
-  //       index: getActiveMqIndex(activeMqToDelete),
-  //     });
-  //   } catch (err) {
-  //     if (err.code !== 20) {
-  //       toggleNotification({
-  //         type: "warning",
-  //         message: { id: "notification.error" },
-  //       });
-  //     }
-  //   }
-  //   setShowModal(false);
-  // };
+      dispatch({
+        type: "ACTIVEMQ_DELETED",
+        index: getActiveMqIndex(activeMqToDelete),
+      });
+    } catch (err) {
+      if (err.code !== 20) {
+        toggleNotification({
+          type: "warning",
+          message: { id: "notification.error" },
+        });
+      }
+    }
+    setShowModal(false);
+  };
 
-  // const handleConfirmDeleteAll = async () => {
-  //   const body = {
-  //     ids: activeMqsToDelete,
-  //   };
+  const handleConfirmDeleteAll = async () => {
+    const body = {
+      ids: activeMqsToDelete,
+    };
 
-  //   try {
-  //     await request("/admin/activeMqs/batch-delete", {
-  //       method: "POST",
-  //       body,
-  //     });
+    try {
+      await request("/active-mq/batch-delete", {
+        method: "POST",
+        body,
+      });
 
-  //     if (isMounted.current) {
-  //       dispatch({
-  //         type: "ACTIVEMQS_DELETED",
-  //       });
-  //     }
-  //   } catch (err) {
-  //     if (isMounted.current) {
-  //       if (err.code !== 20) {
-  //         toggleNotification({
-  //           type: "warning",
-  //           message: { id: "notification.error" },
-  //         });
-  //       }
-  //     }
-  //   }
-  //   setShowModal(false);
-  // };
+      if (isMounted.current) {
+        dispatch({
+          type: "ACTIVEMQS_DELETED",
+        });
+      }
+    } catch (err) {
+      if (isMounted.current) {
+        if (err.code !== 20) {
+          toggleNotification({
+            type: "warning",
+            message: { id: "notification.error" },
+          });
+        }
+      }
+    }
+    setShowModal(false);
+  };
 
-  // const handleDeleteClick = (id) => {
-  //   setShowModal(true);
+  const handleDeleteClick = (id) => {
+    setShowModal(true);
 
-  //   if (id !== "all") {
-  //     dispatch({
-  //       type: "SET_ACTIVEMQ_TO_DELETE",
-  //       id,
-  //     });
-  //   }
-  // };
+    if (id !== "all") {
+      dispatch({
+        type: "SET_ACTIVEMQ_TO_DELETE",
+        id,
+      });
+    }
+  };
 
-  // const handleEnabledChange = async (value, id) => {
-  //   const activeMqIndex = getActiveMqIndex(id);
-  //   const initialActiveMqProps = activeMqs[activeMqIndex];
-  //   const keys = [activeMqIndex, "isEnabled"];
+  const handleEnabledChange = async (value, id) => {
+    const activeMqIndex = getActiveMqIndex(id);
 
-  //   const body = {
-  //     ...initialActiveMqProps,
-  //     isEnabled: value,
-  //   };
+    const initialActiveMqProps = activeMqs[activeMqIndex];
+    const keys = [activeMqIndex, "isEnabled"];
 
-  //   delete body.id;
+    const body = {
+      ...initialActiveMqProps,
+      isEnabled: value,
+    };
 
-  //   try {
-  //     dispatch({
-  //       type: "SET_ACTIVEMQ_ENABLED",
-  //       keys,
-  //       value,
-  //     });
+    delete body.id;
 
-  //     await request(`/admin/activeMqs/${id}`, {
-  //       method: "PUT",
-  //       body,
-  //     });
-  //   } catch (err) {
-  //     if (isMounted.current) {
-  //       dispatch({
-  //         type: "SET_ACTIVEMQ_ENABLED",
-  //         keys,
-  //         value: !value,
-  //       });
+    try {
+      dispatch({
+        type: "SET_ACTIVEMQ_ENABLED",
+        keys,
+        value,
+      });
 
-  //       if (err.code !== 20) {
-  //         toggleNotification({
-  //           type: "warning",
-  //           message: { id: "notification.error" },
-  //         });
-  //       }
-  //     }
-  //   }
-  // };
+      await request(`/active-mq/${id}`, {
+        method: "PUT",
+        body,
+      });
+    } catch (err) {
+      if (isMounted.current) {
+        dispatch({
+          type: "SET_ACTIVEMQ_ENABLED",
+          keys,
+          value: !value,
+        });
+        if (err.code !== 20) {
+          toggleNotification({
+            type: "warning",
+            message: { id: "notification.error" },
+          });
+        }
+      }
+    }
+  };
 
-  // const handleSelectAllCheckbox = () => {
-  //   dispatch({
-  //     type: "SET_ALL_ACTIVEMQS_TO_DELETE",
-  //   });
-  // };
+  const handleSelectAllCheckbox = () => {
+    dispatch({
+      type: "SET_ALL_ACTIVEMQS_TO_DELETE",
+    });
+  };
 
-  // const handleSelectOneCheckbox = (value, id) => {
-  //   dispatch({
-  //     type: "SET_ACTIVEMQS_TO_DELETE",
-  //     value,
-  //     id,
-  //   });
-  // };
+  const handleSelectOneCheckbox = (value, id) => {
+    dispatch({
+      type: "SET_ACTIVEMQS_TO_DELETE",
+      value,
+      id,
+    });
+  };
 
   const handleGoTo = (to) => {
     push(`${pathname}/${to}`);
   };
 
-  console.log("isLoading", isLoading);
-  console.log("loadingActiveMqs", loadingActiveMqs);
   return (
     <Layout>
       <SettingsPageTitle name="activeMqs" />
@@ -307,12 +301,12 @@ const ListView = () => {
                   )}
                 </Typography>
                 <Button
-                  // onClick={() => handleDeleteClick("all")}
+                  onClick={() => handleDeleteClick("all")}
                   startIcon={<Trash />}
                   size="L"
                   variant="danger-light"
                 >
-                  Delete
+                  Delete All
                 </Button>
               </>
             }
@@ -358,8 +352,8 @@ const ListView = () => {
                             activeMqsToDeleteLength > 0 &&
                             activeMqsToDeleteLength < rowsCount
                           }
-                          // value={activeMqsToDeleteLength === rowsCount}
-                          // onValueChange={handleSelectAllCheckbox}
+                          value={activeMqsToDeleteLength === rowsCount}
+                          onValueChange={handleSelectAllCheckbox}
                         />
                       </Th>
                       <Th width="20%">
@@ -374,7 +368,7 @@ const ListView = () => {
                         <Typography variant="sigma" textColor="neutral600">
                           {formatMessage({
                             id: "Settings.activeMqs.form.url",
-                            defaultMessage: "URL",
+                            defaultMessage: "Type",
                           })}
                         </Typography>
                       </Th>
@@ -407,13 +401,13 @@ const ListView = () => {
                         <Td {...stopPropagation}>
                           <BaseCheckbox
                             aria-label={`${formatMessage({
-                              id: "Settings.activeMqs.list.select",
+                              id: "Settings.webhooks.list.select",
                               defaultMessage: "Select",
                             })} ${activeMq.name}`}
                             value={activeMqsToDelete?.includes(activeMq.id)}
-                            // onValueChange={(value) =>
-                            //   handleSelectOneCheckbox(value, activeMq.id)
-                            // }
+                            onValueChange={(value) =>
+                              handleSelectOneCheckbox(value, activeMq.id)
+                            }
                             id="select"
                             name="select"
                           />
@@ -423,12 +417,12 @@ const ListView = () => {
                             fontWeight="semiBold"
                             textColor="neutral800"
                           >
-                            {/* {activeMq.name} */}
+                            {activeMq.name}
                           </Typography>
                         </Td>
                         <Td>
                           <Typography textColor="neutral800">
-                            {/* {activeMq.url} */}
+                            {activeMq.type}
                           </Typography>
                         </Td>
                         <Td>
@@ -442,17 +436,17 @@ const ListView = () => {
                                 id: "Settings.activeMqs.disabled",
                                 defaultMessage: "Disabled",
                               })}
-                              // label={`${activeMq.name} ${formatMessage({
-                              //   id: "Settings.activeMqs.list.th.status",
-                              //   defaultMessage: "Status",
-                              // })}`}
-                              // selected={activeMq.isEnabled}
-                              // onChange={() =>
-                              //   handleEnabledChange(
-                              //     !activeMq.isEnabled,
-                              //     activeMq.id
-                              //   )
-                              // }
+                              label={`${activeMq.name} ${formatMessage({
+                                id: "Settings.webhooks.list.th.status",
+                                defaultMessage: "Status",
+                              })}`}
+                              selected={activeMq.isEnabled}
+                              onChange={() =>
+                                handleEnabledChange(
+                                  !activeMq.isEnabled,
+                                  activeMq.id
+                                )
+                              }
                               visibleLabels
                             />
                           </Flex>
@@ -474,14 +468,14 @@ const ListView = () => {
                             }
                             {
                               <IconButton
-                                // onClick={() => handleDeleteClick(webhook.id)}
+                                onClick={() => handleDeleteClick(activeMq.id)}
                                 label={formatMessage({
                                   id: "Settings.activeMqs.events.delete",
                                   defaultMessage: "Delete",
                                 })}
                                 icon={<Trash />}
                                 noBorder
-                                // id={`delete-${activeMq.id}`}
+                                id={`delete-${activeMq.id}`}
                               />
                             }
                           </Stack>

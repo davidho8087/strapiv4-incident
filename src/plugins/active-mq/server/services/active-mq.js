@@ -80,6 +80,35 @@ module.exports = ({ strapi }) => ({
     return entries;
   },
 
+  async getSetting(id) {
+    console.log("findOne Services");
+    const entry = await strapi.entityService.findOne(
+      "api::active-mq.active-mq",
+      id
+    );
+
+    return entry;
+  },
+
+  async deleteActiveMq(id) {
+    const entry = await strapi.entityService.delete(
+      "api::active-mq.active-mq",
+      id
+    );
+
+    return entry;
+  },
+
+  async getSetting(id) {
+    console.log("findOne Services");
+    const entry = await strapi.entityService.findOne(
+      "api::active-mq.active-mq",
+      id
+    );
+
+    return entry;
+  },
+
   async connectChannel(channel) {
     console.log("channel", channel);
     const connectionOptions = strapi.plugin("active-mq").config("config");

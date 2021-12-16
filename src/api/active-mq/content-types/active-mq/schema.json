@@ -20,9 +20,10 @@
       "type": "string",
       "required": true
     },
-    "enabled": {
+    "isEnabled": {
       "type": "boolean",
-      "default": false
+      "default": false,
+      "required": true
     }
   }
 }

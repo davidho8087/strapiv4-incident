@@ -19,6 +19,7 @@ import useModels from "../../hook/userModels";
 import { axiosInstance } from "../../utils/axiosInstance";
 import ActiveMqForm from "./components/ActiveMqForm";
 import cleanData from "./utils/formatData";
+import { createActiveMq, updateActiveMq } from "../../utils/api";
 
 const EditView = () => {
   const {
@@ -33,10 +34,11 @@ const EditView = () => {
 
   const isCreating = id === "create";
 
-  const fetchWebhook = useCallback(
+  const fetchActiveMq = useCallback(
     async (id) => {
-      const [err, { data }] = await to(
-        request(`/api/active-mq/${id}`, {
+      console.log;
+      const [err, data] = await to(
+        request(`/active-mq/${id}`, {
           method: "GET",
         })
       );
@@ -56,44 +58,50 @@ const EditView = () => {
   );
 
   const { isLoading, data } = useQuery(
-    ["get-webhook", id],
-    () => fetchWebhook(id),
+    ["get-activeMq", id],
+    () => fetchActiveMq(id),
     {
       enabled: !isCreating,
     }
   );
 
-  const {
-    isLoading: isTriggering,
-    data: triggerResponse,
-    isIdle: isTriggerIdle,
-    mutate,
-  } = useMutation(() => axiosInstance.post(`/plugin/active-mq/${id}/trigger`));
+  const createActiveMqMutation = useMutation((body) => createActiveMq(body), {
+    onSuccess: async (result) => {
+      toggleNotification({
+        type: "success",
+        message: { id: "Settings.webhooks.created" },
+      });
+      replace(`/plugins/active-mq/${result.id}`);
 
-  const triggerWebhook = () =>
-    mutate(null, {
-      onError: () => {
-        toggleNotification({
-          type: "warning",
-          message: { id: "notification.error" },
-        });
-      },
-    });
-
-  const createWebhookMutation = useMutation((body) => {
-    console.log("body", body);
-    return request("/plugin/active-mq", {
-      method: "POST",
-      body,
-    });
+      unlockApp();
+    },
+    onError: (e) => {
+      toggleNotification({
+        type: "warning",
+        message: { id: "notification.error" },
+      });
+      console.log("error leh", e);
+      unlockApp();
+    },
   });
 
-  const updateWebhookMutation = useMutation(({ id, body }) =>
-    request(`/plugin/active-mq/${id}`, {
-      method: "PUT",
-      body,
-    })
-  );
+  const updateActiveMqMutation = useMutation((body) => updateActiveMq(body), {
+    onSuccess: () => {
+      toggleNotification({
+        type: "success",
+        message: { id: "notification.form.success.fields" },
+      });
+      unlockApp();
+    },
+    onError: (e) => {
+      toggleNotification({
+        type: "warning",
+        message: { id: "notification.error" },
+      });
+      console.log(e);
+      unlockApp();
+    },
+  });
 
   const handleSubmit = async (data) => {
     console.log("Hey Submit leh ------------------------->");
@@ -101,55 +109,20 @@ const EditView = () => {
     console.log("isCreating", isCreating);
     if (isCreating) {
       lockApp();
-      createWebhookMutation.mutate(data, {
-        onSuccess: (result) => {
-          console.log("result", result);
-          toggleNotification({
-            type: "success",
-            message: { id: "Settings.webhooks.created" },
-          });
-          replace(`/plugin/active-mq/${result.data.id}`);
-          unlockApp();
-        },
-        onError: (e) => {
-          toggleNotification({
-            type: "warning",
-            message: { id: "notification.error" },
-          });
-          console.log(e);
-          unlockApp();
-        },
-      });
+
+      await createActiveMqMutation.mutateAsync(data);
     } else {
+      // On Update
+      console.log("are you here else.. Some going one");
       lockApp();
-      updateWebhookMutation.mutate(
-        { id, body: cleanData(data) },
-        {
-          onSuccess: () => {
-            queryClient.invalidateQueries(["get-webhook", id]);
-            toggleNotification({
-              type: "success",
-              message: { id: "notification.form.success.fields" },
-            });
-            unlockApp();
-          },
-          onError: (e) => {
-            toggleNotification({
-              type: "warning",
-              message: { id: "notification.error" },
-            });
-            console.log(e);
-            unlockApp();
-          },
-        }
-      );
+      await updateActiveMqMutation.mutateAsync({ id, body: data });
     }
   };
 
-  const isDraftAndPublishEvents = useMemo(
-    () => collectionTypes.some((ct) => ct.options.draftAndPublish === true),
-    [collectionTypes]
-  );
+  // const isDraftAndPublishEvents = useMemo(
+  //   () => collectionTypes.some((ct) => ct.options.draftAndPublish === true),
+  //   [collectionTypes]
+  // );
 
   if (isLoading || isLoadingForModels) {
     return <LoadingIndicatorPage />;
@@ -162,12 +135,12 @@ const EditView = () => {
         {...{
           handleSubmit,
           data,
-          triggerWebhook,
+
           isCreating,
-          isTriggering,
-          isTriggerIdle,
-          triggerResponse: triggerResponse?.data.data,
-          isDraftAndPublishEvents,
+          // isTriggering,
+          // isTriggerIdle,
+
+          // isDraftAndPublishEvents,
         }}
       />
     </Main>

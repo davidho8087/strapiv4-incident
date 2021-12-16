@@ -18,6 +18,8 @@ const App = () => {
       <Switch>
         <Route path={`/plugins/${pluginId}`} component={HomePage} exact />
         <Route path={`/plugins/${pluginId}/create`} component={EditPage} />
+        <Route path={`/plugins/${pluginId}/:id`} component={EditPage} />
+
         <Route component={NotFound} />
       </Switch>
     </div>

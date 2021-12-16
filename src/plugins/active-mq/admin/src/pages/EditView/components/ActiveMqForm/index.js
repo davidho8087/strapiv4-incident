@@ -23,14 +23,11 @@ import schema from "../utils/schema";
 const ActiveMqForm = ({
   handleSubmit,
   data,
-  triggerWebhook,
+
   isCreating,
-  isTriggering,
-  triggerResponse,
-  isDraftAndPublishEvents,
 }) => {
   const { formatMessage } = useIntl();
-  const [showTriggerResponse, setShowTriggerResponse] = useState(false);
+  // const [showTriggerResponse, setShowTriggerResponse] = useState(false);
 
   return (
     <Formik
@@ -64,13 +61,13 @@ const ActiveMqForm = ({
             title={
               isCreating
                 ? formatMessage({
-                    id: "Settings.webhooks.create",
-                    defaultMessage: "Create a webhook",
+                    id: "Settings.active-mqs.create",
+                    defaultMessage: "Create an Active-Mq channel",
                   })
                 : data?.name
             }
             navigationAction={
-              <Link startIcon={<ArrowLeft />} to="/settings/webhooks">
+              <Link startIcon={<ArrowLeft />} to="/plugins/active-mq">
                 {formatMessage({
                   id: "app.components.go-back",
                   defaultMessage: "Go back",
@@ -158,16 +155,16 @@ const ActiveMqForm = ({
 ActiveMqForm.propTypes = {
   data: PropTypes.object,
   handleSubmit: PropTypes.func.isRequired,
-  triggerWebhook: PropTypes.func.isRequired,
+  // triggerWebhook: PropTypes.func.isRequired,
   isCreating: PropTypes.bool.isRequired,
-  isDraftAndPublishEvents: PropTypes.bool.isRequired,
-  isTriggering: PropTypes.bool.isRequired,
-  triggerResponse: PropTypes.object,
+  // isDraftAndPublishEvents: PropTypes.bool.isRequired,
+  // isTriggering: PropTypes.bool.isRequired,
+  // triggerResponse: PropTypes.object,
 };
 
 ActiveMqForm.defaultProps = {
   data: undefined,
-  triggerResponse: undefined,
+  // triggerResponse: undefined,
 };
 
 export default ActiveMqForm;
