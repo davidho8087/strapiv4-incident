@@ -64,6 +64,25 @@ const EditView = () => {
       enabled: !isCreating,
     }
   );
+  //------------------------------------------------------
+  const fetchContentType = useCallback(async () => {
+    const { err, data } = await request("/active-mq/contentType/findAll", {
+      method: "GET",
+    });
+
+    if (err) {
+      toggleNotification({
+        type: "warning",
+        message: { id: "notification.error" },
+      });
+
+      return null;
+    }
+
+    return data;
+  }, [toggleNotification]);
+
+  const dataTable = useQuery("get-contentype", () => fetchContentType());
 
   const createActiveMqMutation = useMutation((body) => createActiveMq(body), {
     onSuccess: async (result) => {
@@ -128,6 +147,8 @@ const EditView = () => {
     return <LoadingIndicatorPage />;
   }
 
+  console.log("data", data);
+
   return (
     <Main>
       <SettingsPageTitle name="ActiveMqs" />
@@ -135,7 +156,7 @@ const EditView = () => {
         {...{
           handleSubmit,
           data,
-
+          dataTable,
           isCreating,
           // isTriggering,
           // isTriggerIdle,

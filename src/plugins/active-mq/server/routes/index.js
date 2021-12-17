@@ -56,4 +56,12 @@ module.exports = [
       policies: [],
     },
   },
+  {
+    method: "GET",
+    path: "/contentType/findAll",
+    handler: "activeMqController.getContentType",
+    config: {
+      policies: [],
+    },
+  },
 ];

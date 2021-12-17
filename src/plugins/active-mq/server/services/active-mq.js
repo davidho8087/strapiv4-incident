@@ -99,15 +99,15 @@ module.exports = ({ strapi }) => ({
     return entry;
   },
 
-  async getSetting(id) {
-    console.log("findOne Services");
-    const entry = await strapi.entityService.findOne(
-      "api::active-mq.active-mq",
-      id
-    );
+  // async getSetting(id) {
+  //   console.log("findOne Services");
+  //   const entry = await strapi.entityService.findOne(
+  //     "api::active-mq.active-mq",
+  //     id
+  //   );
 
-    return entry;
-  },
+  //   return entry;
+  // },
 
   async connectChannel(channel) {
     console.log("channel", channel);
@@ -208,5 +208,35 @@ module.exports = ({ strapi }) => ({
         });
       });
     });
+  },
+
+  async connectActiveMq(payload) {
+    console.log("payload", payload);
+
+    // await strapi
+    //   .store({ type: "plugin", name: "active-mq", key: "settings" })
+    //   .set({
+    //     key: "settings",
+    //     value: ctx.request.body,
+    //   });
+
+    // const ActiveMqConfig = await strapi
+    //   .store({ type: "plugin", name: "active-mq", key: "settings" })
+    //   .get();
+
+    // // const result = await getService("active-mq").updateSettings(
+    // //   ctx.request.body
+    // // );
+    // // const result = "hello";
+    // console.log("topic", ActiveMqConfig.channel.topic);
+
+    // const queue = strapi.plugin("active-mq").config("queue");
+    // await getService("active-mq").connectChannel(ActiveMqConfig.channel.topic);
+    // await connectChannel(ActiveMqConfig.channel.topic);
+    // await connectChannel(queue);
+
+    //ctx.send(ActiveMqConfig);
+
+    return;
   },
 });

@@ -4,8 +4,10 @@ import set from "lodash/set";
 const initialState = {
   activeMqs: [],
   activeMqsToDelete: [],
+  contentType: [],
   activeMqToDelete: null,
   loadingActiveMqs: true,
+  loadingContentType: true,
 };
 
 const reducer = (state, action) =>
@@ -18,8 +20,15 @@ const reducer = (state, action) =>
         break;
       }
 
+      case "GET_CONTENTTYPE_SUCCEEDED": {
+        draftState.contentType = action.data;
+        draftState.loadingContentType = false;
+        break;
+      }
+
       case "TOGGLE_LOADING": {
         draftState.loadingActiveMqs = !state.loadingActiveMqs;
+        draftState.loadingContentType = !state.loadingContentType;
         break;
       }
 

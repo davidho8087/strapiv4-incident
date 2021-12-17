@@ -11,6 +11,10 @@ const schema = yup.object().shape({
     .string(translatedErrors.string)
     .required(translatedErrors.required)
     .matches(NAME_REGEX, translatedErrors.regex),
+  dataTable: yup
+    .string(translatedErrors.string)
+    .required(translatedErrors.required)
+    .matches(NAME_REGEX, translatedErrors.regex),
 });
 
 export default schema;

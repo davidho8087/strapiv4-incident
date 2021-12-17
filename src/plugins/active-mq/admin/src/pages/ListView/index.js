@@ -51,6 +51,7 @@ import Pencil from "@strapi/icons/Pencil";
 import Trash from "@strapi/icons/Trash";
 import EmptyDocuments from "@strapi/icons/EmptyDocuments";
 import reducer, { initialState } from "./reducer";
+// import { getContentType } from "../../utils/api";
 // import adminPermissions from "../../../../../permissions";
 
 const ListView = () => {
@@ -90,6 +91,7 @@ const ListView = () => {
 
   useEffect(() => {
     setIsLoading(true);
+
     fetchActiveMqs();
   }, []);
 
@@ -356,7 +358,7 @@ const ListView = () => {
                           onValueChange={handleSelectAllCheckbox}
                         />
                       </Th>
-                      <Th width="20%">
+                      <Th width="40%">
                         <Typography variant="sigma" textColor="neutral600">
                           {formatMessage({
                             id: "Settings.activeMqs.form.name",
@@ -364,11 +366,19 @@ const ListView = () => {
                           })}
                         </Typography>
                       </Th>
-                      <Th width="60%">
+                      <Th width="20%">
                         <Typography variant="sigma" textColor="neutral600">
                           {formatMessage({
                             id: "Settings.activeMqs.form.url",
                             defaultMessage: "Type",
+                          })}
+                        </Typography>
+                      </Th>
+                      <Th width="20%">
+                        <Typography variant="sigma" textColor="neutral600">
+                          {formatMessage({
+                            id: "Settings.activeMqs.form.select.dataTable",
+                            defaultMessage: "related",
                           })}
                         </Typography>
                       </Th>
@@ -421,8 +431,19 @@ const ListView = () => {
                           </Typography>
                         </Td>
                         <Td>
-                          <Typography textColor="neutral800">
+                          <Typography
+                            fontWeight="semiBold"
+                            textColor="neutral800"
+                          >
                             {activeMq.type}
+                          </Typography>
+                        </Td>
+                        <Td>
+                          <Typography
+                            fontWeight="semiBold"
+                            textColor="neutral800"
+                          >
+                            {activeMq.dataTable}
                           </Typography>
                         </Td>
                         <Td>
@@ -430,7 +451,7 @@ const ListView = () => {
                             <Switch
                               onLabel={formatMessage({
                                 id: "Settings.activeMqs.enabled",
-                                defaultMessage: "Enabled",
+                                defaultMessage: " Enabled",
                               })}
                               offLabel={formatMessage({
                                 id: "Settings.activeMqs.disabled",

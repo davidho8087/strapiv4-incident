@@ -35,6 +35,7 @@
   "Settings.activeMqs.form.events": "Events",
   "Settings.activeMqs.form.headers": "Headers",
   "Settings.activeMqs.form.name": "Name",
+  "Settings.activeMqs.form.dataTable": "dataTable",
   "Settings.activeMqs.form.url": "Url",
   "Settings.activeMqs.headers.remove": "Remove header row {number}",
   "Settings.activeMqs.key": "Key",

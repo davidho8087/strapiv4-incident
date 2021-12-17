@@ -33,3 +33,11 @@ export const updateActiveMq = async ({ id, body }) => {
 
   return data;
 };
+
+export const getContentType = async (payload) => {
+  console.log(payload);
+
+  const { data } = await axiosInstance.get(`/active-mq/contentType/findAll`);
+
+  return data;
+};

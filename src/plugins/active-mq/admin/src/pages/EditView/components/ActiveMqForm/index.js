@@ -20,27 +20,24 @@ import { useIntl } from "react-intl";
 // import TriggerContainer from "../TriggerContainer";
 import schema from "../utils/schema";
 
-const ActiveMqForm = ({
-  handleSubmit,
-  data,
-
-  isCreating,
-}) => {
+const ActiveMqForm = ({ handleSubmit, data, dataTable, isCreating }) => {
   const { formatMessage } = useIntl();
   // const [showTriggerResponse, setShowTriggerResponse] = useState(false);
-
+  console.log("datatable", dataTable);
   return (
     <Formik
       onSubmit={handleSubmit}
       initialValues={{
         name: data?.name || "",
         type: data?.type || "",
+        dataTable: data?.dataTable || "",
+        content: data,
       }}
       validationSchema={schema}
       validateOnChange={false}
       validateOnBlur={false}
     >
-      {({ handleSubmit, errors }) => (
+      {({ handleSubmit, errors, handleChange }) => (
         <Form noValidate>
           <HeaderLayout
             primaryAction={
@@ -85,37 +82,7 @@ const ActiveMqForm = ({
               >
                 <Stack size={6}>
                   <Grid gap={6}>
-                    {/* <GridItem col={6}>
-                      <Field
-                        as={Select}
-                        name="type"
-                        label={formatMessage({
-                          id: "Settings.apiTokens.form.type",
-                          defaultMessage: "Channel Type",
-                        })}
-                        error={
-                          errors.name && formatMessage({ id: errors.name })
-                        }
-                        onChange={(value) => {
-                          handleChange({ target: { name: "type", value } });
-                        }}
-                      >
-                        <Option value="Topic">
-                          {formatMessage({
-                            id: "Settings.apiTokens.types.topic",
-                            defaultMessage: "Topic",
-                          })}
-                        </Option>
-                        <Option value="Queue">
-                          {formatMessage({
-                            id: "Settings.apiTokens.types.queue",
-                            defaultMessage: "Queue",
-                          })}
-                        </Option>
-                      </Field>
-                    </GridItem> */}
-
-                    <GridItem col={6}>
+                    <GridItem col={12}>
                       <Field
                         as={TextInput}
                         name="name"
@@ -128,9 +95,9 @@ const ActiveMqForm = ({
                         })}
                       />
                     </GridItem>
-                    <GridItem col={12}>
+                    <GridItem col={6}>
                       <Field
-                        as={TextInput}
+                        as={Select}
                         name="type"
                         error={
                           errors.type && formatMessage({ id: errors.type })
@@ -139,7 +106,43 @@ const ActiveMqForm = ({
                           id: "Settings.roles.form.input.type",
                           defaultMessage: "Type",
                         })}
-                      />
+                        onChange={(value) => {
+                          handleChange({
+                            target: { name: "type", value },
+                          });
+                        }}
+                      >
+                        <Option value="queue">Queue</Option>
+                        <Option value="topic">Topic</Option>
+                      </Field>
+                    </GridItem>
+                    <GridItem col={6}>
+                      <Field
+                        as={Select}
+                        name="dataTable"
+                        label={formatMessage({
+                          id: "Settings.activeMqs.form.select.dataTable",
+                          defaultMessage: "DataTable",
+                        })}
+                        error={
+                          errors.dataTable &&
+                          formatMessage({ id: errors.dataTable })
+                        }
+                        onChange={(value) => {
+                          handleChange({
+                            target: { name: "dataTable", value },
+                          });
+                        }}
+                      >
+                        {!dataTable.isLoading &&
+                          dataTable.data.map((role) => {
+                            return (
+                              <Option key={role} value={role}>
+                                {role}
+                              </Option>
+                            );
+                          })}
+                      </Field>
                     </GridItem>
                   </Grid>
                 </Stack>
@@ -155,6 +158,7 @@ const ActiveMqForm = ({
 ActiveMqForm.propTypes = {
   data: PropTypes.object,
   handleSubmit: PropTypes.func.isRequired,
+  dataTable: PropTypes.object,
   // triggerWebhook: PropTypes.func.isRequired,
   isCreating: PropTypes.bool.isRequired,
   // isDraftAndPublishEvents: PropTypes.bool.isRequired,

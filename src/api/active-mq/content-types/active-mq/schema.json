@@ -24,6 +24,9 @@
       "type": "boolean",
       "default": false,
       "required": true
+    },
+    "dataTable": {
+      "type": "string"
     }
   }
 }
