@@ -123,8 +123,8 @@ module.exports = async ({ strapi }) => {
       }
 
       client.on("error", function (error) {
-        strapi.log.warn("Connection lost. Reconnecting...");
-        reconnect();
+        strapi.log.warn("Connection lost");
+        //reconnect();
       });
 
       client.subscribe(subscribeHeaders, function (error, message) {
