@@ -49,8 +49,6 @@ module.exports = ({ strapi }) => ({
     return entry;
   },
 
-  async connectChannel(channel) {},
-
   async connectActiveMq({ name, type, dataTable, isEnabled }) {
     // initialise destination
     const destination = `/${type}/${name}`;

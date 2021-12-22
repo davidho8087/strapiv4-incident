@@ -36,7 +36,6 @@ const EditView = () => {
 
   const fetchActiveMq = useCallback(
     async (id) => {
-      console.log;
       const [err, data] = await to(
         request(`/active-mq/${id}`, {
           method: "GET",
@@ -64,7 +63,7 @@ const EditView = () => {
       enabled: !isCreating,
     }
   );
-  //------------------------------------------------------
+
   const fetchContentType = useCallback(async () => {
     const { err, data } = await request("/active-mq/contentType/findAll", {
       method: "GET",
@@ -99,7 +98,7 @@ const EditView = () => {
         type: "warning",
         message: { id: "notification.error" },
       });
-      console.log("error leh", e);
+      console.log(e);
       unlockApp();
     },
   });
@@ -123,16 +122,13 @@ const EditView = () => {
   });
 
   const handleSubmit = async (data) => {
-    console.log("Hey Submit leh ------------------------->");
-    console.log("data", data);
-    console.log("isCreating", isCreating);
     if (isCreating) {
       lockApp();
 
       await createActiveMqMutation.mutateAsync(data);
     } else {
       // On Update
-      console.log("are you here else.. Some going one");
+
       lockApp();
       await updateActiveMqMutation.mutateAsync({ id, body: data });
     }
@@ -147,8 +143,6 @@ const EditView = () => {
     return <LoadingIndicatorPage />;
   }
 
-  console.log("data", data);
-
   return (
     <Main>
       <SettingsPageTitle name="ActiveMqs" />
@@ -160,7 +154,6 @@ const EditView = () => {
           isCreating,
           // isTriggering,
           // isTriggerIdle,
-
           // isDraftAndPublishEvents,
         }}
       />

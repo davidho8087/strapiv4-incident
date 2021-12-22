@@ -14,9 +14,6 @@ module.exports = async ({ strapi }) => {
     .store({ type: "plugin", name: "active-mq", key: "settings" })
     .get();
 
-  // console.log("hello ");
-  console.log("activeMqConfig", activeMqConfig);
-
   if (!activeMqConfig) {
     // console.log("run create activeMq config");
     const pluginStore = strapi.store({
@@ -59,18 +56,16 @@ module.exports = async ({ strapi }) => {
   // console.log("topic", activeMqConfig.channel.topic);
   // console.log("queue", activeMqConfig.channel.queue);
 
-  const initActiveMq = (channel) => {
-    console.log("channel", channel);
+  const initActiveMq = async () => {
+    const activeMqs = await strapi.entityService.findMany(
+      "api::active-mq.active-mq"
+    );
+
     const connectionOptions = strapi.plugin("active-mq").config("config");
 
     const reconnectOptions = strapi
       .plugin("active-mq")
       .config("reconnectOptions");
-
-    const subscribeHeaders = {
-      destination: channel,
-      ack: "client-individual",
-    };
 
     const servers = [connectionOptions];
 
@@ -80,14 +75,14 @@ module.exports = async ({ strapi }) => {
     // log connection status
     manager.on("connecting", function (connector) {
       strapi.log.info(
-        `Connecting to ${connector.serverProperties.remoteAddress.transportPath} - ${channel}`
+        `Connecting to ${connector.serverProperties.remoteAddress.transportPath}`
       );
     });
 
     // log if connected
     manager.on("connect", function (connector) {
       strapi.log.info(
-        `Connected to ${connector.serverProperties.remoteAddress.transportPath} - ${channel}`
+        `Connected to ${connector.serverProperties.remoteAddress.transportPath}`
       );
     });
 
@@ -96,9 +91,7 @@ module.exports = async ({ strapi }) => {
       const connectArgs = error.connectArgs;
       const address = connectArgs.host + ":" + connectArgs.port;
 
-      strapi.log.warn(
-        `Connection error to ${address} : ${error.message} - ${channel}`
-      );
+      strapi.log.warn(`Connection error to ${address} : ${error.message}`);
     });
 
     //Connect to MQ Service
@@ -111,7 +104,6 @@ module.exports = async ({ strapi }) => {
           port: connectionOptions.port,
           host: connectionOptions.host,
           connectArgs: connectionOptions,
-          channel: channel,
         };
 
         strapi.log.error(error.message, {
@@ -127,40 +119,61 @@ module.exports = async ({ strapi }) => {
         //reconnect();
       });
 
-      client.subscribe(subscribeHeaders, function (error, message) {
-        if (error) {
-          strapi.log.error(error.message, {
-            err: new Error("Subscription error"),
-          });
+      console.log(activeMqs);
 
-          return;
-        }
+      if (activeMqs && activeMqs.length > 0) {
+        activeMqs.forEach(({ dataTable, destination, isEnabled }) => {
+          if (isEnabled) {
+            let subscribeHeaders = {
+              destination: destination,
+              ack: "client-individual",
+            };
 
-        console.log("coming to readString");
-        // Attempt to read for any incoming messages
-        message.readString("utf-8", function (error, body) {
-          if (error) {
-            strapi.log.error(error.message, {
-              err: new Error("Read message error"),
+            client.subscribe(subscribeHeaders, function (error, message) {
+              if (error) {
+                strapi.log.error(error.message, {
+                  err: new Error("Subscription error"),
+                });
+
+                return;
+              }
+
+              console.log("coming to readString");
+              // Attempt to read for any incoming messages
+              message.readString("utf-8", function (error, body) {
+                if (error) {
+                  strapi.log.error(error.message, {
+                    err: new Error("Read message error"),
+                  });
+
+                  return;
+                }
+                //Called to inform Client that the Message is received...
+                client.ack(message);
+
+                try {
+                  const parsedMessage = JSON.parse(body);
+
+                  if (!parsedMessage?.example) {
+                    strapi
+                      .service("plugin::active-mq.active-mq")
+                      .onSubmitHandler(body, dataTable);
+
+                    strapi.log.info(`Subscribed to ${destination}`);
+                  } else {
+                    subscription.unsubscribe();
+                    strapi.log.info(`Unsubcribe to ${destination}`);
+                  }
+                } catch (error) {
+                  strapi.log.error(error);
+                }
+              });
             });
-
-            return;
           }
-          //Called to inform Client that the Message is received...
-          client.ack(message);
-
-          //Send the Message to Callback
-          console.log("coming to Service");
-          // callback(body);
-          strapi.service("plugin::active-mq.active-mq").onSubmitHandler(body);
-
-          strapi.log.info(`Successfully subscribed to ${channel}`);
         });
-      });
+      }
     });
   };
 
-  console.log("dont run");
-  initActiveMq(process.env.ACTIVEMQ_TOPIC);
-  initActiveMq(process.env.ACTIVEMQ_QUEUE);
+  initActiveMq();
 };

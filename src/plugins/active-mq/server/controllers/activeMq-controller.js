@@ -43,7 +43,6 @@ module.exports = {
   },
 
   async getContentType(ctx) {
-    console.log("getContentType===========>");
     const contentType = await strapi
       .service(`plugin::content-manager.content-types`)
       .findDisplayedContentTypes()
@@ -52,45 +51,15 @@ module.exports = {
     ctx.send({ data: contentType });
   },
 
-  // async updateSettings(ctx) {
-  //   if (_.isEmpty(ctx.request.body)) {
-  //     throw new ValidationError("Request body cannot be empty");
-  //   }
-
-  //   console.log("Input", ctx.request.body);
-
-  //   await strapi
-  //     .store({ type: "plugin", name: "active-mq", key: "settings" })
-  //     .set({
-  //       key: "settings",
-  //       value: ctx.request.body,
-  //     });
-
-  //   const ActiveMqConfig = await strapi
-  //     .store({ type: "plugin", name: "active-mq", key: "settings" })
-  //     .get();
-
-  //   // const result = await getService("active-mq").updateSettings(
-  //   //   ctx.request.body
-  //   // );
-  //   // const result = "hello";
-  //   console.log("topic", ActiveMqConfig.channel.topic);
-
-  //   const queue = strapi.plugin("active-mq").config("queue");
-  //   await getService("active-mq").connectChannel(ActiveMqConfig.channel.topic);
-  //   // await connectChannel(ActiveMqConfig.channel.topic);
-  //   // await connectChannel(queue);
-
-  //   ctx.send(ActiveMqConfig);
-  // },
-
+  // # CreateNew
   async createActiveMq(ctx) {
     if (_.isEmpty(ctx.request.body)) {
       throw new ValidationError("Request body cannot be empty");
     }
 
-    console.log("Input", ctx.request.body);
     let data = ctx.request.body;
+
+    data.destination = `/${data.type}/${data.name}`;
 
     try {
       const entry = await strapi.entityService.create(
@@ -102,32 +71,9 @@ module.exports = {
     } catch (error) {
       console.log(error);
     }
-
-    // await strapi
-    //   .store({ type: "plugin", name: "active-mq", key: "settings" })
-    //   .set({
-    //     key: "settings",
-    //     value: ctx.request.body,
-    //   });
-
-    // const ActiveMqConfig = await strapi
-    //   .store({ type: "plugin", name: "active-mq", key: "settings" })
-    //   .get();
-
-    // // const result = await getService("active-mq").updateSettings(
-    // //   ctx.request.body
-    // // );
-    // // const result = "hello";
-    // console.log("topic", ActiveMqConfig.channel.topic);
-
-    // const queue = strapi.plugin("active-mq").config("queue");
-    // await getService("active-mq").connectChannel(ActiveMqConfig.channel.topic);
-    // await connectChannel(ActiveMqConfig.channel.topic);
-    // await connectChannel(queue);
-
-    //ctx.send(ActiveMqConfig);
   },
 
+  //# deleteAll
   async deleteActiveMqs(ctx) {
     console.log("DELETE ALL");
 
@@ -157,6 +103,7 @@ module.exports = {
     ctx.send({ data: ids });
   },
 
+  // # deleteOne
   async deleteActiveMq(ctx) {
     console.log("DELETE");
 
@@ -190,6 +137,8 @@ module.exports = {
     if (!activeMq) {
       return ctx.notFound("activeMq.notFound");
     }
+
+    body.destination = `/${body.type}/${body.name}`;
 
     const updatedActiveMq = await strapi.entityService.update(
       "api::active-mq.active-mq",
