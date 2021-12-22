@@ -62,13 +62,15 @@ module.exports = createCoreService("api::incident.incident", ({ strapi }) => ({
         );
 
         entities.push(entity);
-      } catch {
+      } catch (error) {
+        strapi.log.error(error);
         await strapi.service("api::incident.incident").rollback({
           rollback: "incident",
           payload: event,
         });
       }
     }
+
     return entities;
   },
 
@@ -82,7 +84,7 @@ module.exports = createCoreService("api::incident.incident", ({ strapi }) => ({
           await Promise.all(
             imgs.map(async (imgId) => {
               await strapi
-                .services("api::incident-media.incident-media")
+                .service("api::incident-media.incident-media")
                 .onDelete(imgId);
             })
           );

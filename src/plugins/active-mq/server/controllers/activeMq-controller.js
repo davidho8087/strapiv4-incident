@@ -47,7 +47,7 @@ module.exports = {
     const contentType = await strapi
       .service(`plugin::content-manager.content-types`)
       .findDisplayedContentTypes()
-      .map((item) => item.info.displayName);
+      .map((item) => item.modelName);
 
     ctx.send({ data: contentType });
   },
@@ -205,7 +205,7 @@ module.exports = {
     if (!updatedActiveMq) {
       return ctx.notFound("activeMq.notFound");
     }
-
+    console.log(updatedActiveMq);
     strapi
       .service("plugin::active-mq.active-mq")
       .connectActiveMq(updatedActiveMq);

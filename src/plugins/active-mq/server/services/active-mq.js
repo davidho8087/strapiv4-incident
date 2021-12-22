@@ -1,17 +1,18 @@
 const stompit = require("stompit");
 
 module.exports = ({ strapi }) => ({
-  async onSubmitHandler(bodyMessage) {
+  async onSubmitHandler(bodyMessage, dataTable) {
     //console.log("strapi", strapi);
-    console.log(bodyMessage);
+    console.log("bodyMessage", bodyMessage);
+    console.log("dataTable", dataTable);
 
     try {
       console.log("FROM ACTIVEMQ");
-      const parsedMessage = JSON.parse(bodyMessage);
+      // const parsedMessage = JSON.parse(bodyMessage);
 
-      return await strapi
-        .controller("api::incident.incident")
-        .createIncident(parsedMessage);
+      // return await strapi
+      //   .controller(`api::${dataTable}.${dataTable}`)
+      //   .createIncident(parsedMessage);
       // await createIncident(JSON.parse(message));
     } catch (error) {
       // const errorPayload = {
@@ -45,34 +46,9 @@ module.exports = ({ strapi }) => ({
       .get();
 
     return ActiveMqConfig;
-
-    // const entry = await strapi.entityService.update(
-    //   "api::active-mq.active-mq",
-    //   1,
-    //   {
-    //     data: {
-    //       topic: bodyMessage.topic,
-    //     },
-    //   }
-    // );
-    // return entry;
-
-    //   const activeMqConfig = await strapi
-    //   .store({ type: "plugin", name: "active-mq", key: "settings" })
-    //   .get();
-
-    // return activeMqConfig;
   },
 
   async getSettings() {
-    // console.log(strapi.config.get("plugin.active-mq"));
-    // return strapi.config.get("plugin.active-mq");
-
-    // const entry = await strapi.entityService.findOne(
-    //   "api::active-mq.active-mq",
-    //   1
-    // );
-
     const entries = await strapi.entityService.findMany(
       "api::active-mq.active-mq"
     );
@@ -99,143 +75,97 @@ module.exports = ({ strapi }) => ({
     return entry;
   },
 
-  // async getSetting(id) {
-  //   console.log("findOne Services");
-  //   const entry = await strapi.entityService.findOne(
-  //     "api::active-mq.active-mq",
-  //     id
-  //   );
+  async connectChannel(channel) {},
 
-  //   return entry;
-  // },
+  async connectActiveMq({ name, type, dataTable, isEnabled, id }) {
+    const channel = `/${type}/${name}`;
 
-  async connectChannel(channel) {
-    console.log("channel", channel);
     const connectionOptions = strapi.plugin("active-mq").config("config");
-
-    const reconnectOptions = strapi
-      .plugin("active-mq")
-      .config("reconnectOptions");
 
     const subscribeHeaders = {
       destination: channel,
       ack: "client-individual",
     };
 
-    const servers = [connectionOptions];
-
-    // Initialize ConnectFailedOver
-    const manager = new stompit.ConnectFailover(servers, reconnectOptions);
-
-    // log connection status
-    manager.on("connecting", function (connector) {
-      strapi.log.info(
-        `Connecting to ${connector.serverProperties.remoteAddress.transportPath} - ${channel}`
-      );
-    });
-
-    // log if connected
-    manager.on("connect", function (connector) {
-      strapi.log.info(
-        `Connected to ${connector.serverProperties.remoteAddress.transportPath} - ${channel}`
-      );
-    });
-
-    // log if on error
-    manager.on("error", function (error) {
-      const connectArgs = error.connectArgs;
-      const address = connectArgs.host + ":" + connectArgs.port;
-
-      strapi.log.warn(
-        `Connection error to ${address} : ${error.message} - ${channel}`
-      );
-    });
-
-    //Connect to MQ Service
-    manager.connect(function (error, client, reconnect) {
-      if (error) {
-        const errorPayload = {
-          module: "ActiveMq",
-          type: "error",
-          message: error.message,
-          port: connectionOptions.port,
-          host: connectionOptions.host,
-          connectArgs: connectionOptions,
-          channel: channel,
-        };
-
-        strapi.log.error(error.message, {
-          err: new Error(`Failed to connect: ${error.message}`),
-          detail: errorPayload,
-        });
-
-        return;
-      }
-
-      client.on("error", function (error) {
-        strapi.log.warn("Connection lost. Reconnecting...");
-        reconnect();
-      });
-
-      client.subscribe(subscribeHeaders, function (error, message) {
+    if (isEnabled) {
+      stompit.connect(connectionOptions, function (error, client) {
         if (error) {
-          strapi.log.error(error.message, {
-            err: new Error("Subscription error"),
-          });
-
+          console.log("connect error " + error.message);
           return;
         }
 
-        console.log("coming to readString");
-        // Attempt to read for any incoming messages
-        message.readString("utf-8", function (error, body) {
-          if (error) {
-            strapi.log.error(error.message, {
-              err: new Error("Read message error"),
-            });
+        // if (isEnabled) {
+        console.log("isEnabled", isEnabled);
+        amqSubscription = client.subscribe(
+          subscribeHeaders,
+          function (error, message, subscription) {
+            if (error) {
+              strapi.log.error(error.message, {
+                err: new Error("Subscription error"),
+              });
 
+              return;
+            }
+
+            console.log("coming to readString");
+            // Attempt to read for any incoming messages
+            message.readString("utf-8", function (error, body) {
+              console.log("body", body);
+              if (error) {
+                strapi.log.error(error.message, {
+                  err: new Error("Read message error"),
+                });
+
+                return;
+              }
+              //Called to inform Client that the Message is received...
+              client.ack(message);
+
+              //Send the Message to Callback
+              console.log("coming to Service");
+              // callback(body);
+
+              strapi
+                .service("plugin::active-mq.active-mq")
+                .onSubmitHandler(body, dataTable);
+
+              strapi.log.info(`Successfully subscribed to ${channel}`);
+              // client.disconnect();
+              subscription.unsubscribe();
+            });
+          }
+        );
+      });
+    } else {
+      stompit.connect(connectionOptions, function (error, client) {
+        if (error) {
+          console.log("Unable to connect: " + error.message);
+          return;
+        }
+
+        var sendParams = {
+          destination: channel,
+          "content-type": "application/json",
+        };
+
+        var frame = client.send(sendParams);
+
+        frame.end(
+          JSON.stringify({
+            anything: "anything",
+            example: true,
+          })
+        );
+
+        client.disconnect(function (error) {
+          if (error) {
+            console.log("Error while disconnecting: " + error.message);
             return;
           }
-          //Called to inform Client that the Message is received...
-          client.ack(message);
-
-          //Send the Message to Callback
-          console.log("coming to Service");
-          // callback(body);
-          strapi.service("plugin::active-mq.active-mq").onSubmitHandler(body);
-
-          strapi.log.info(`Successfully subscribed to ${channel}`);
+          console.log("Sent message");
         });
       });
-    });
-  },
-
-  async connectActiveMq(payload) {
-    console.log("payload", payload);
-
-    // await strapi
-    //   .store({ type: "plugin", name: "active-mq", key: "settings" })
-    //   .set({
-    //     key: "settings",
-    //     value: ctx.request.body,
-    //   });
-
-    // const ActiveMqConfig = await strapi
-    //   .store({ type: "plugin", name: "active-mq", key: "settings" })
-    //   .get();
-
-    // // const result = await getService("active-mq").updateSettings(
-    // //   ctx.request.body
-    // // );
-    // // const result = "hello";
-    // console.log("topic", ActiveMqConfig.channel.topic);
-
-    // const queue = strapi.plugin("active-mq").config("queue");
-    // await getService("active-mq").connectChannel(ActiveMqConfig.channel.topic);
-    // await connectChannel(ActiveMqConfig.channel.topic);
-    // await connectChannel(queue);
-
-    //ctx.send(ActiveMqConfig);
+    }
 
     return;
   },
