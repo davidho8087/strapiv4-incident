@@ -8,14 +8,14 @@
     "description": ""
   },
   "options": {
-    "draftAndPublish": true
+    "draftAndPublish": false
   },
   "pluginOptions": {},
   "attributes": {
     "name": {
       "type": "string",
       "required": true,
-      "regex": "[a-zA-Z0-9][A-Za-z0-9._-]*"
+      "regex": "[^\\n]+"
     },
     "type": {
       "type": "string",

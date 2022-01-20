@@ -337,7 +337,7 @@ const ListView = () => {
                     >
                       {formatMessage({
                         id: "Settings.activeMqs.list.button.add",
-                        defaultMessage: "Add new webhook",
+                        defaultMessage: "Add new AtiveMq",
                       })}
                     </TFooter>
                   }
@@ -411,7 +411,7 @@ const ListView = () => {
                         <Td {...stopPropagation}>
                           <BaseCheckbox
                             aria-label={`${formatMessage({
-                              id: "Settings.webhooks.list.select",
+                              id: "Settings.activeMqs.list.select",
                               defaultMessage: "Select",
                             })} ${activeMq.name}`}
                             value={activeMqsToDelete?.includes(activeMq.id)}
@@ -458,7 +458,7 @@ const ListView = () => {
                                 defaultMessage: "Disabled",
                               })}
                               label={`${activeMq.name} ${formatMessage({
-                                id: "Settings.webhooks.list.th.status",
+                                id: "Settings.activeMqs.list.th.status",
                                 defaultMessage: "Status",
                               })}`}
                               selected={activeMq.isEnabled}

@@ -90,7 +90,7 @@ const ActiveMqForm = ({ handleSubmit, data, dataTable, isCreating }) => {
                           errors.name && formatMessage({ id: errors.name })
                         }
                         label={formatMessage({
-                          id: "Settings.webhooks.form.name",
+                          id: "Settings.ActiveMq.form.name",
                           defaultMessage: "Name",
                         })}
                       />

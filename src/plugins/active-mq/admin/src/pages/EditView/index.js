@@ -87,7 +87,7 @@ const EditView = () => {
     onSuccess: async (result) => {
       toggleNotification({
         type: "success",
-        message: { id: "Settings.webhooks.created" },
+        message: { id: "Settings.activeMq.created" },
       });
       replace(`/plugins/active-mq/${result.id}`);
 

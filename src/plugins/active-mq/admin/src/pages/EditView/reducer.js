@@ -4,7 +4,7 @@ import set from "lodash/set";
 
 const header = { key: "", value: "" };
 
-const initialWebhook = {
+const initialActiveMq = {
   events: [],
   headers: [header],
   name: "",
@@ -13,9 +13,9 @@ const initialWebhook = {
 
 const initialState = {
   formErrors: {},
-  initialData: initialWebhook,
+  initialData: initialActiveMq,
   isTriggering: false,
-  modifiedData: initialWebhook,
+  modifiedData: initialActiveMq,
   isLoading: true,
   triggerResponse: {},
 };

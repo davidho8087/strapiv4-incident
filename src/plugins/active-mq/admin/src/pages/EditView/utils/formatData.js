@@ -1,13 +1,13 @@
 import { set } from "lodash";
 
 const cleanData = (data) => {
-  const webhooks = { ...data };
+  const activeMq = { ...data };
 
-  console.log("webhooks", webhooks);
-  console.log("data", data);
-  set(webhooks, "headers", unformatHeaders(data.headers));
-  console.log("after", webhooks);
-  return webhooks;
+  // console.log("webhooks", webhooks);
+  // console.log("data", data);
+  set(activeMq, "headers", unformatHeaders(data.headers));
+  // console.log("after", webhooks);
+  return activeMq;
 };
 
 const unformatHeaders = (headers) => {

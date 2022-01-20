@@ -1,0 +1,13 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\src",
+    "\\src\\plugins",
+    "\\src\\plugins\\active-mq",
+    "\\src\\plugins\\active-mq\\admin",
+    "\\src\\plugins\\active-mq\\admin\\src",
+    "\\src\\plugins\\socket-io"
+  ],
+  "SelectedNode": "\\src\\plugins\\active-mq\\admin\\src\\index.js",
+  "PreviewInSolutionExplorer": false
+}
